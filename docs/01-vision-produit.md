@@ -1,99 +1,50 @@
-# 01 — Vision Produit : Sapior
+# Vision produit — Sapior
 
-## Le Problème
+## Le problème
 
-La philosophie est l'une des disciplines intellectuelles les plus riches qui soit. Elle structure notre façon de penser, de décider, de vivre. Et pourtant, elle reste inaccessible pour la grande majorité des gens.
+La philosophie souffre d'un problème d'accessibilité que les éditeurs n'ont pas résolu. Les textes classiques sont denses et nécessitent un contexte que la plupart des lecteurs n't ont pas. Les gens achètent la République de Platon ou les Essais de Montaigne, les posent sur une étagère après 20 pages, et ne les rouvrent jamais.
 
-**Pourquoi ?**
+Les alternatives existantes ne résolvent pas le problème. Blinkist propose des résumés de 15 minutes, trop courts pour vraiment comprendre une pensée. Audible propose des lectures intégrales, trop longues pour être écoutées en entier. Les podcasts de philo varient trop en qualité et n'ont pas de structure de progression.
 
-1. **Les livres sont indigestes** : La République de Platon, l'Éthique de Spinoza, Être et Temps de Heidegger — ces textes nécessitent un accompagnement que la plupart des gens n't ont pas
-2. **Le format ne s'adapte pas au mode de vie moderne** : On ne lit plus 2h consécutives. On a 20 minutes dans le métro, 30 minutes en faisant du sport
-3. **Pas de validation** : On peut lire un chapitre et ne rien retenir. Aucune app ne propose de tester sa compréhension
-4. **L'isolation intellectuelle** : Il n'y a nulle part pour partager une citation qui vous a frappé, un concept qui a changé votre vision
+Il n'existe pas d'app pensée exclusivement pour rendre la philosophie et le développement personnel accessibles, avec un vrai système pour valider ce qu'on retient.
 
-## La Solution
+## La solution
 
-Sapior transforme les grandes oeuvres philosophiques en **expériences audio structurées et gamifiées** :
+Sapior propose des livres audio de 45 à 90 minutes par œuvre, ni trop courts ni trop longs. Chaque audio est accompagné d'un quiz pour tester ce qu'on a compris, d'un résumé écrit, et d'applications concrètes — ce qu'on peut faire, professionnellement et personnellement, avec ce qu'on vient d'apprendre.
 
-- **Écouter** : scripts audio professionnels de 45-90 min par oeuvre
-- **Comprendre** : points clés, transcription, résumé structuré
-- **Valider** : quiz QCM après chaque écoute
-- **Appliquer** : applications concrètes pro/perso de chaque concept
-- **Partager** : citations visuelles partageables en un geste
-- **Progresser** : suivi par livre, par catégorie, streaks, badges
+Le format s'adapte à la vie réelle : on écoute dans le métro, on répond à des questions le lendemain matin, on partage une citation qui nous a frappé.
 
-> *"Si vous pouviez écouter Platon pendant votre trajet du matin, tester votre compréhension, puis partager la citation qui vous a touché — la philosophie deviendrait une habitude quotidienne."*
+## Les utilisateurs
 
-## Personas
+**Le cadre curieux** a 30 à 45 ans, peu de temps, et l'envie de se cultiver sans sacrifier ses autres priorités. Il a essayé les livres, il n'y arrive pas. Le format audio correspond à ses trajets et ses séances de sport. Le quiz lui donne l'impression de vraiment progresser, pas juste d'écouter en fond sonore.
 
-### 🎧 Le Curieux Pressé (principal)
-- **Profil** : 28-42 ans, CSP+, peu de temps libre, veut se cultiver
-- **Pain point** : achète des livres de philo, ne les finit jamais
-- **Usage** : 20-40 min/jour (trajet, sport), écoute 1-2 livres/semaine
-- **Critère de succès** : "J'ai appris quelque chose que je peux réutiliser aujourd'hui"
+**L'étudiant en sciences humaines** cherche une introduction accessible avant d'attaquer les textes originaux. Il utilise Sapior pour saisir les grandes lignes d'un auteur avant un cours ou un examen.
 
-### 🎓 L'Étudiant en Philosophie
-- **Profil** : 18-25 ans, études de philo, lettres, sciences humaines
-- **Pain point** : les textes originaux sont denses, besoin d'introduction accessible
-- **Usage** : complément aux cours, révision avant examens
-- **Critère de succès** : comprendre les concepts clés + les relier à d'autres auteurs
+**Le manager en recherche de recul** s'intéresse particulièrement aux applications pratiques. Il veut des idées applicables, pas de la philosophie pour la philosophie. La section "applications" (pro et perso) avec une action concrète pour le jour même est la feature qui lui parle le plus.
 
-### 📈 Le Manager en Quête de Sens
-- **Profil** : 35-50 ans, cadre ou entrepreneur, cherche des outils de réflexion
-- **Pain point** : veut des philosophies applicables, pas seulement théoriques
-- **Usage** : focus sur les applications pratiques (onglet Pro), partage en équipe
-- **Critère de succès** : "Un concept que je peux appliquer dès demain en réunion"
+## Pourquoi c'est différent des alternatives
 
-### 🧘 Le Chercheur de Sens
-- **Profil** : tous âges, pratique de développement personnel, méditation
-- **Pain point** : veut aller plus loin que le développement personnel mainstream
-- **Usage** : stoïcisme, bouddhisme, existentialisme — philosophies de vie
-- **Critère de succès** : des réponses à des questions existentielles
+| | Sapior | Blinkist | Audible | Podcasts |
+|-|--------|---------|---------|---------|
+| Philosophie et développement personnel curé | Oui | Non | Non | Variable |
+| Format adapté (45-90 min) | Oui | Non (trop court) | Non (trop long) | Variable |
+| Quiz de validation | Oui | Non | Non | Non |
+| Applications pro/perso | Oui | Non | Non | Non |
+| Citations partageables | Oui | Non | Non | Non |
+| Lecture offline | Oui | Oui | Oui | Partiel |
 
-## Positionnement vs Concurrents
+## Les décisions produit clés
 
-| Critère | Sapior | Blinkist | Audible | Podcasts |
-|---------|--------|---------|---------|---------|
-| Philosophie pure | ✅ | ⚠️ | ⚠️ | ⚠️ |
-| Format audio | ✅ | ✅ | ✅ | ✅ |
-| Quiz & validation | ✅ | ❌ | ❌ | ❌ |
-| Applications pratiques | ✅ | ⚠️ | ❌ | ❌ |
-| Citations partageables | ✅ | ❌ | ❌ | ❌ |
-| Offline | ✅ | ✅ | ✅ | ⚠️ |
-| Prix | 💰 | 💰💰 | 💰💰 | Gratuit |
-| Curation philosophique | ✅ | ❌ | ❌ | ❌ |
+**Le catalogue est curé manuellement.** Chaque titre est sélectionné selon trois critères : est-ce que l'œuvre a eu un impact mesurable sur la façon dont les gens pensent ? Est-ce qu'on peut l'expliquer clairement à quelqu'un sans formation ? Est-ce qu'il existe des applications concrètes aujourd'hui ? Cette sélection est ce qui distingue Sapior d'une plateforme généraliste.
 
-**Notre avantage unique** : Sapior est la seule app entièrement dédiée à la philosophie, avec validation active et applications concrètes.
+**Les applications pro/perso sont la feature différenciante.** La philosophie reste souvent abstraite. Associer chaque œuvre à deux ou trois actions concrètes — une dans le cadre professionnel, une dans la vie personnelle — transforme une écoute passive en quelque chose d'actionnable. C'est la feature que les utilisateurs mentionnent le plus.
 
-## Catalogue — Principe de Curation
+**Le Quiz Infini est pensé pour la rétention à long terme.** Un quiz après chaque livre suffit pour valider une compréhension immédiate. Le Quiz Infini, qui pioche dans l'ensemble des livres écoutés, renforce la mémoire sur la durée. Le streak visible pousse à y revenir régulièrement sans que l'app soit intrusive.
 
-### Les 32 catégories
-Philosophie · Développement personnel · Psychologie · Économie & Finance · Santé & Bien-être · Histoire · Spiritualité · Littérature · Sciences · Art & Esthétique · Éthique · Politique · Sociologie · Anthropologie · Linguistique · Logique · Métaphysique · Épistémologie · Philosophie morale · Philosophie politique · Phénoménologie · Existentialisme · Stoïcisme · Bouddhisme · Pragmatisme · Empirisme · Rationalisme · Idéalisme · Matérialisme · Féminisme · Écologie · Transhumanisme
+**Les citations partageables sont une feature de croissance organique.** Quand un utilisateur partage une carte citation sur ses réseaux, il expose Sapior à son entourage sans que ça ressemble à une publicité. C'est du bouche-à-oreille natif.
 
-### Critères de sélection
-1. **Impact historique** : l'oeuvre a-t-elle changé la façon de penser d'une génération ?
-2. **Accessibilité** : peut-on l'expliquer clairement à un non-philosophe en 60 min ?
-3. **Applicabilité** : existe-t-il des applications concrètes à aujourd'hui ?
-4. **Diversité** : représentation équilibrée des périodes, cultures, genres
+**Le bouton "Demander l'audio" donne une priorité claire au catalogue.** Plutôt que de décider seul quels livres ajouter, les demandes des utilisateurs guident directement les arbitrages éditoriaux. C'est une liste d'attente qui double comme outil de recherche utilisateur.
 
-## Stratégie de Monétisation
+## Ce qui a guidé les arbitrages
 
-### Freemium
-- **Gratuit** : 3 livres, 10 QCM/jour
-- **Premium (4,99€/mois)** : catalogue complet, QCM illimité, téléchargement offline
-- **Annual (39,99€/an)** : -33% vs mensuel + accès anticipé nouveaux livres
-
-### B2B Education (V3)
-- **Licences institutions** : universités, lycées, bibliothèques
-- **Pack "Philo au travail"** : entreprises souhaitant développer la pensée critique
-
-## Métriques de Succès
-
-| KPI | Cible M3 | Cible M12 |
-|----|---------|---------|
-| Téléchargements | 500 | 5 000 |
-| Sessions/utilisateur/semaine | 3 | 5 |
-| Livres complétés/utilisateur | 1 | 4 |
-| Quiz complétés | 60% des écoutes | 75% |
-| Conversion → Premium | 5% | 10% |
-| Note App Store | 4.2 | 4.6 |
+Le critère central : est-ce que cette feature aide l'utilisateur à comprendre et à retenir, ou est-ce qu'elle ajoute du bruit ? L'app n'a pas de système social complexe, pas de forum, pas de recommandations algorithmiques. Chaque ajout a été évalué à l'aune de l'objectif principal : qu'un utilisateur finisse un livre, en retire quelque chose, et revienne en écouter un autre.

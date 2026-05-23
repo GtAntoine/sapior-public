@@ -1,232 +1,51 @@
-# 02 — Catalogue & Architecture Audio : Sapior
+# Catalogue et expérience audio — Sapior
 
-## Architecture du Catalogue
+## Comment le catalogue est construit
 
-### Principe : Catalog-as-JSON sur CDN
+Le catalogue Sapior est curé manuellement. Chaque titre est choisi selon trois questions : est-ce que cette œuvre a influencé la façon dont les gens pensent aujourd'hui ? Peut-on l'expliquer clairement à quelqu'un sans formation ? Y a-t-il des applications pratiques dans la vie quotidienne ?
 
-Le catalogue Sapior n'est pas géré par un serveur applicatif. Toutes les métadonnées vivent dans un fichier JSON versionné sur Cloudflare R2, fetché au démarrage de l'app.
+Cette sélection exclut des textes importants académiquement mais difficilement accessibles (Hegel, Heidegger dans leur intégralité), et inclut des œuvres récentes qui ne sont pas de la philosophie classique mais qui répondent aux mêmes critères (Nassim Taleb, Daniel Kahneman, Steven Levitt).
 
-```
-App launch
-    ↓
-useR2Catalog hook
-    ↓
-GET r2-catalog.json (R2 public)
-    ↓
-if remote.version > local.r2CatalogVersion
-    → update store (appStore.r2Catalog)
-    → save version
-else
-    → use cached catalog (offline-safe)
-```
+Le catalogue couvre aujourd'hui 45+ titres, organisés en cinq catégories principales : philosophie, développement personnel, psychologie, économie, et santé/bien-être.
 
-**Avantage majeur** : ajouter un nouveau livre au catalogue ne nécessite pas de mise à jour App Store. Il suffit de mettre à jour `r2-catalog.json` et d'uploader les fichiers audio/data.
+## Ce que contient chaque livre
 
-### Structure du R2 Bucket
+Pour chaque titre, l'app propose quatre types de contenu :
 
-```
-r2-bucket/
-├── r2-catalog.json           # Index versionné (fetché au démarrage)
-│
-├── platon-apologie-de-socrate/
-│   ├── cover.jpg             # Image couverture (400×600px, WebP)
-│   ├── script_audio_long.mp3 # Audio complet (mono, 128kbps, ~45-90 min)
-│   ├── resume.md             # Résumé textuel (500-800 mots)
-│   ├── script_audio_long.md  # Transcription complète
-│   ├── qcm.json              # Quiz (10-20 questions)
-│   └── application.json      # Applications pro/perso
-│
-├── descartes-discours-de-la-methode/
-│   └── [même structure]
-│
-└── ...
-```
+**L'audio** dure entre 45 et 90 minutes. Ce n'est pas une lecture du texte original — c'est un script rédigé pour être écouté, qui reformule les idées clés dans un langage accessible, avec un fil narratif clair.
 
-### Format r2-catalog.json
+**Le résumé** est un document court (500 à 800 mots) qui capture l'essentiel de l'œuvre. Il sert à réviser après l'écoute ou à décider si on veut écouter le livre complet.
 
-```json
-{
-  "version": 42,
-  "books": [
-    {
-      "id": "platon-apologie-de-socrate",
-      "title": "Apologie de Socrate",
-      "author": "Platon",
-      "categoryId": "philosophie",
-      "year": "-399",
-      "folder": "platon-apologie-de-socrate",
-      "durationSeconds": 3240,
-      "available": true
-    },
-    {
-      "id": "nietzsche-ainsi-parlait",
-      "title": "Ainsi parlait Zarathoustra",
-      "author": "Friedrich Nietzsche",
-      "categoryId": "existentialisme",
-      "year": "1883",
-      "folder": "nietzsche-ainsi-parlait",
-      "durationSeconds": 5400,
-      "available": true
-    }
-  ]
-}
-```
+**La transcription** est le script intégral de l'audio. Certains utilisateurs préfèrent lire, ou alterner entre lecture et écoute.
 
-## Architecture Audio
+**Les applications** sont la partie la plus originale. Pour chaque livre, deux ou trois situations concrètes sont décrites — une dans un contexte professionnel, une dans un contexte personnel — avec une action à faire le jour même. L'idée : transformer une écoute en quelque chose d'actionnable dans les 24 heures.
 
-### Pipeline de téléchargement
+## La mécanique audio
 
-```typescript
-// hooks/useAudio.ts
+L'audio est hébergé sur Cloudflare R2, un service de stockage de fichiers. L'utilisateur télécharge le fichier avant de l'écouter — ça prend quelques secondes selon la connexion, et ensuite le livre est disponible hors réseau.
 
-async function loadAudio(bookId: string) {
-  const folder = getBookFolder(bookId);
-  const localPath = `${FileSystem.Paths.document}/audio/${folder}.mp3`;
+La position de lecture est sauvegardée automatiquement toutes les 5 secondes. Quand l'utilisateur rouvre l'app, il reprend exactement là où il s'est arrêté — même s'il a fermé l'app, reçu un appel, ou redémarré son téléphone.
 
-  // 1. Vérifier si déjà téléchargé
-  const fileInfo = await FileSystem.getInfoAsync(localPath);
+L'audio fonctionne en arrière-plan et en mode silencieux sur iOS. Écouter Sapior avec les AirPods pendant une réunion en sourdine — c'est un usage réel, pas un edge case.
 
-  if (!fileInfo.exists) {
-    // 2. Télécharger depuis R2
-    const r2Url = getAudioUrl(folder);
-    await FileSystem.downloadAsync(r2Url, localPath, {
-      headers: { 'Cache-Control': 'no-cache' }
-    });
-  }
+La vitesse de lecture est réglable : 0.75x pour les passages denses, 1.5x ou 2x pour les redites. L'utilisateur qui a déjà des bases sur Nietzsche peut accélérer les parties introductives.
 
-  // 3. Créer le player expo-audio
-  player = createAudioPlayer({ uri: localPath });
+## Le téléchargement : pourquoi offline plutôt que streaming
 
-  // 4. Restaurer la position sauvegardée
-  const savedPosition = await AsyncStorage.getItem(`@sapior_pos_${bookId}`);
-  if (savedPosition) {
-    await player.seekTo(parseFloat(savedPosition));
-  }
+Le choix du téléchargement local plutôt que du streaming en continu est délibéré. Dans le métro, dans un avion, dans une zone blanche — le streaming tombe. Un livre téléchargé ne tombe jamais. Pour un contenu qu'on écoute pendant 60 minutes d'une traite, la continuité est plus importante que la légèreté du chargement.
 
-  // 5. Démarrer l'autosave (toutes les 5 secondes)
-  startAutoSave(bookId, player);
-}
-```
+L'app gère les téléchargements dans un écran dédié : liste des livres téléchargés, espace utilisé, possibilité de supprimer les fichiers qu'on ne réécoute plus.
 
-### Persistance de position
+## La mise à jour du catalogue sans mise à jour de l'app
 
-```typescript
-// Sauvegarde automatique toutes les 5 secondes
-function startAutoSave(bookId: string, player: AudioPlayer) {
-  const interval = setInterval(async () => {
-    const position = player.currentTime;
-    const duration = player.duration;
+Un catalogue qui grossit normalement force les utilisateurs à mettre à jour l'app pour voir les nouveaux titres. C'est une friction inutile.
 
-    await AsyncStorage.setItem(`@sapior_pos_${bookId}`, String(position));
-    await AsyncStorage.setItem(`@sapior_dur_${bookId}`, String(duration));
-  }, 5000);
+Le catalogue est géré dans un fichier de configuration versionné, hébergé sur le même service que les audios. Au lancement de l'app, si une nouvelle version du catalogue est disponible, elle est chargée automatiquement. L'utilisateur voit les nouveaux titres sans rien faire.
 
-  return () => clearInterval(interval);
-}
+Ce choix a un effet concret : un livre peut être ajouté et visible dans l'app le jour même, sans passer par le processus de validation des stores (qui prend en moyenne 24 à 48 heures pour iOS).
 
-// Auto-restore au démarrage : dernier livre écouté (lastLoadedBookId du store)
-// → loadAudio(lastLoadedBookId) → MiniPlayer visible dans TabBar
-```
+## Le bouton "Demander l'audio"
 
-### Mode silencieux iOS
+Quand un utilisateur cherche un titre et ne le trouve pas, il voit un bouton "Demander l'audio". Il peut signaler qu'il veut ce livre.
 
-```typescript
-await Audio.setAudioModeAsync({
-  staysActiveInBackground: true,      // Lecture en arrière-plan
-  playsInSilentModeIOS: true,         // Lecture même en mode silencieux
-  shouldDuckAndroid: true,            // Réduction volume autres apps
-});
-```
-
-### Contrôles de vitesse
-
-```typescript
-const SPEED_OPTIONS = [0.75, 1, 1.25, 1.5, 2]; // Disponibles via cycleRate()
-
-// Cycle automatique sur le bouton vitesse
-function cycleRate() {
-  const currentIdx = SPEED_OPTIONS.indexOf(currentRate);
-  const nextIdx = (currentIdx + 1) % SPEED_OPTIONS.length;
-  player.setRate(SPEED_OPTIONS[nextIdx]);
-}
-```
-
-## Gestion des Téléchargements
-
-### Structure locale
-
-```
-device-filesystem/
-└── documents/
-    └── audio/
-        ├── platon-apologie-de-socrate.mp3    # ~45MB
-        ├── nietzsche-aussi-parlait.mp3        # ~75MB
-        └── ...
-```
-
-### useScanDownloads
-
-Au démarrage, ce hook scanne le filesystem pour synchroniser la liste des livres téléchargés avec le store (downloadedFolders). Permet de gérer les téléchargements même après une réinstallation ou une mise à jour.
-
-```typescript
-async function scanDownloads(): Promise<string[]> {
-  const audioDir = `${FileSystem.Paths.document}/audio`;
-  const files = await FileSystem.readDirectoryAsync(audioDir);
-  return files
-    .filter(f => f.endsWith('.mp3'))
-    .map(f => f.replace('.mp3', ''));
-}
-```
-
-### DownloadedBooksScreen
-
-Interface de gestion : liste des livres téléchargés, espace utilisé, suppression individuelle.
-
-```typescript
-// Suppression propre
-async function deleteAudio(bookId: string) {
-  const path = `${FileSystem.Paths.document}/audio/${getBookFolder(bookId)}.mp3`;
-  await FileSystem.deleteAsync(path, { idempotent: true });
-
-  // Unload le player si c'est le livre actuellement chargé
-  if (currentBookId === bookId) {
-    await player?.remove();
-    setCurrentBookId(null);
-  }
-
-  // Mise à jour du store
-  store.setDownloadedFolders(prev => prev.filter(f => f !== bookId));
-}
-```
-
-## Optimisations Techniques
-
-### Lazy Loading QCM
-
-Les fichiers `qcm.json` ne sont chargés que lors du premier accès, puis mis en cache en mémoire (store.qcmCache). Évite de charger 30+ fichiers JSON au démarrage.
-
-```typescript
-async function getQuizData(bookId: string): Promise<QCMData | null> {
-  // 1. Vérifier le cache en mémoire
-  if (store.qcmCache[bookId]) return store.qcmCache[bookId];
-
-  // 2. Charger depuis R2
-  const url = getQcmUrl(getBookFolder(bookId));
-  const data = await fetch(url).then(r => r.json());
-
-  // 3. Mettre en cache
-  store.setQcmCache(bookId, data);
-  return data;
-}
-```
-
-### Cloudflare R2 vs S3
-
-| Critère | R2 | S3 |
-|--------|----|----|
-| Egress fees | Gratuit | $0.09/GB |
-| CDN global | Inclus | Via CloudFront (coût) |
-| Latence EU | ~20ms | ~30-50ms |
-| Compatibilité S3 API | ✅ | ✅ |
-
-**Choix R2** : à notre échelle (< 100GB), R2 est significativement moins cher qu'AWS S3 + CloudFront, tout en offrant des performances similaires.
+Ces demandes servent directement à prioriser le catalogue. Si dix personnes demandent le même livre en deux semaines, c'est une indication claire de ce qui doit être produit en priorité. C'est plus fiable que de décider seul ce qui va plaire.

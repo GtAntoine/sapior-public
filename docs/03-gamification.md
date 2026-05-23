@@ -1,242 +1,61 @@
-# 03 — Système de Gamification : Sapior
+# Quiz, progression et engagement — Sapior
 
-## Philosophie
+## Le problème que ça résout
 
-La gamification de Sapior est **intentionnellement non-intrusive**. L'objectif n'est pas de rendre l'app addictive au sens négatif, mais de créer des boucles de renforcement positives qui encouragent la régularité et valident la compréhension.
+Écouter un livre audio sans rien faire après, c'est comme lire sans annoter. On retient 20% en moyenne. Le quiz n'est pas une feature gadget — c'est la réponse à un vrai problème de rétention.
 
-**Principe directeur** : la progression doit refléter une vraie compréhension, pas juste du temps passé.
+La question posée lors de la conception : comment faire en sorte qu'un utilisateur qui vient d'écouter "Apologie de Socrate" retienne vraiment quelque chose, sans que ça ressemble à un cours en ligne ?
 
-## Niveaux de Progression
+## Le quiz par livre
 
-### 1. Progression par Livre
+Après chaque écoute, un quiz de 10 à 20 questions est disponible. Les questions portent sur les idées principales du livre, pas sur des détails anecdotiques. L'objectif n'est pas de piéger l'utilisateur — c'est de lui permettre de vérifier ce qu'il a compris.
 
-```
-État d'un livre :
-├── À lire (dans reading list ou pas)
-├── En cours (position audio > 0)
-│   └── % d'avancement (position / durée totale)
-├── Terminé (audio 100% + quiz passé)
-└── Favori ⭐
+Chaque question est accompagnée d'une explication. Même une bonne réponse est expliquée, parce que "j'ai coché la bonne case" et "j'ai compris pourquoi c'était la bonne réponse" sont deux choses différentes.
 
-Stockage :
-completedIds: string[]          → livres 100% + quiz
-scores: Record<string, number>  → score quiz par livre
-lastReadAt: Record<string, string> → timestamp dernière écoute
-```
+Un livre est considéré terminé quand l'audio est écouté et le quiz passé. C'est un critère délibérément simple : pas de score minimum requis, pas d'obligation de rejouer. L'objectif est d'inciter à faire le quiz, pas de décourager ceux qui ont eu 60%.
 
-### 2. Progression par Catégorie
+## Le Quiz Infini
 
-```typescript
-// Sur CategoryScreen : affichage dynamique
-const categoryProgress = {
-  completed: books.filter(b => completedIds.includes(b.id)).length,
-  total: books.length,
-  percentage: Math.round((completed / total) * 100)
-}
-```
+Le Quiz Infini pioche dans l'ensemble des livres qu'un utilisateur a écoutés. C'est une révision espacée : revoir des questions sur des livres écoutés il y a plusieurs semaines renforce la mémoire à long terme bien mieux que de réviser juste après l'écoute.
 
-### 3. Statistiques Globales (StatsScreen)
+Le streak est visible en permanence — le nombre de bonnes réponses consécutives. Perdre son streak a un effet psychologique réel : on hésite davantage avant de répondre, on fait plus attention. Ce n'est pas une mécanique punitive, c'est une mécanique d'attention.
 
-```
-StatsScreen
-├── Livres terminés : X / Y total
-├── Temps d'écoute total : Xh Xmin
-├── Quiz complétés : X
-├── Score moyen quiz : X%
-├── Streak QCM infini actuel : X
-├── Best streak QCM : X (persisté)
-├── Citations en favoris : X
-└── Répartition par catégorie (graphique)
-```
+Le record personnel est conservé. Dépasser son meilleur streak est une motivation concrète pour revenir régulièrement, sans que l'app soit intrusive ou envoyante de notifications.
 
-## Système de Quiz
+## Les citations partageables
 
-### Quiz par Livre (QuizScreen)
+Chaque livre contient une sélection de citations. L'utilisateur peut les mettre en favoris, les retrouver dans son profil, et les partager.
 
-Après avoir écouté un livre, l'utilisateur peut valider sa compréhension :
-- 10-20 questions QCM (chargées depuis `qcm.json` sur R2)
-- 4 choix par question
-- Feedback immédiat (correct/incorrect + explication)
-- Score final : X/Y → stocké dans `scores[bookId]`
-- Seuil de validation : 70% → livre marqué `passed`
+Le partage ne génère pas un lien ou un texte brut — il génère une carte visuelle mise en page avec la citation, le nom de l'auteur et le titre du livre. La carte est exportée comme une image, prête à être postée sur n'importe quelle plateforme.
 
-```typescript
-// Format qcm.json
-{
-  "questions": [
-    {
-      "id": "q1",
-      "question": "Quelle est la thèse principale de l'Apologie ?",
-      "options": [
-        "Socrate est innocent et défend la philosophie",
-        "Socrate reconnaît sa culpabilité",
-        "La démocratie athénienne est juste",
-        "Les dieux n'existent pas"
-      ],
-      "correctIndex": 0,
-      "explanation": "Socrate défend son activité philosophique..."
-    }
-  ]
-}
-```
+Ce choix de format n'est pas anodin. Une image partagée sur Instagram ou LinkedIn expose Sapior à un audience nouvelle sans que ça ressemble à une publicité. C'est du bouche-à-oreille natif, généré par les utilisateurs qui ont eu un coup de cœur pour une phrase.
 
-### QCM Infini (InfiniteQCMScreen)
+## Les applications pro/perso
 
-Mode sans limite — questions piochées aléatoirement dans tous les livres consultés :
+C'est la feature la plus originale de Sapior, et celle qui revient le plus dans les retours utilisateurs.
 
-```typescript
-// Algorithme de sélection
-function pickNextQuestion(
-  allBooks: Book[],
-  visitedBooks: string[],
-  qcmCache: QCMCache,
-  excludeRecent: string[]  // Évite les répétitions immédiates
-): Question {
-  const availableBooks = visitedBooks.filter(id => qcmCache[id]);
-  const book = randomPick(availableBooks);
-  const bookQuestions = qcmCache[book].questions.filter(
-    q => !excludeRecent.includes(q.id)
-  );
-  return randomPick(bookQuestions);
-}
-```
+Pour chaque livre, deux ou trois situations concrètes sont décrites — une dans un contexte professionnel, une dans un contexte personnel. Chaque situation est accompagnée d'une action à faire dans les 24 heures.
 
-**Streak System :**
-- Bonne réponse → streak + 1
-- Mauvaise réponse → streak reset à 0
-- `bestQCMStreak` persisté dans store (Zustand → AsyncStorage)
-- Affichage visuel du streak actuel (🔥 avec compteur)
+Exemple avec "Apologie de Socrate" :
+- En professionnel : lors de la prochaine réunion, remplacer une affirmation par une question ouverte et observer comment ça change la dynamique
+- En personnel : choisir une conviction forte qu'on n'a jamais questionnée et chercher trois contre-exemples
 
-## Citations Partageables
+L'idée derrière : la philosophie ne sert à rien si elle reste abstraite. Associer chaque œuvre à des situations réelles et à une action immédiate transforme une écoute en quelque chose qui change concrètement la journée de l'utilisateur.
 
-### Flow utilisateur
+## Les parcours thématiques
 
-```
-CitationsScreen (liste des citations du livre)
-    ↓ Long press sur une citation
-CitationCard (preview animée)
-    ↓ Capture d'écran (expo-gl ou react-native-view-shot)
-CitationShareCard (composant off-screen)
-    ↓ Share API native (iOS share sheet)
-[Image partagée : carte mise en page avec citation + auteur + livre]
-```
+Les parcours (ou "journeys") groupent plusieurs livres autour d'un thème. "Les grands stoïciens" regroupe Zénon, Épictète et Marc Aurèle dans un ordre logique, avec une progression visible : 1/3, 2/3, 3/3.
 
-### Format de la carte partagée
+L'intérêt n'est pas seulement éditorial. Un utilisateur qui commence un parcours a une raison de revenir : il veut finir ce qu'il a commencé. C'est une mécanique de rétention simple, sans notification, sans pression.
 
-```
-┌─────────────────────────────────┐
-│                                 │
-│  "La vraie sagesse consiste à   │
-│   savoir que l'on ne sait       │
-│   rien."                        │
-│                                 │
-│                    — Socrate    │
-│               Apologie de      │
-│               Socrate · Platon  │
-│                                 │
-│  ♦ Sapior                       │
-└─────────────────────────────────┘
-```
+## Les stats
 
-### useCitationShare
+L'écran de statistiques affiche : temps total d'écoute, nombre de livres terminés, taux de réussite au quiz, meilleur streak QCM. Ce sont des chiffres que l'utilisateur peut montrer à quelqu'un. "J'ai écouté 18 livres, 15h29 d'écoute, 74% de réussite" — c'est concret, c'est visible, ça donne envie de continuer.
 
-```typescript
-// hooks/useCitationShare.ts
-async function shareCitation(citation: Citation, book: Book) {
-  // 1. Rendre CitationShareCard off-screen
-  // 2. Capturer avec react-native-view-shot (PNG)
-  const imageUri = await captureRef(cardRef, { format: 'png', quality: 1 });
+## Les arbitrages
 
-  // 3. Partager via Share API iOS
-  await Share.share({
-    url: imageUri,
-    message: `"${citation.text}" — ${citation.author} · ${book.title} (via Sapior)`
-  });
-}
-```
+**Quiz obligatoire ou optionnel ?** Obligatoire aurait augmenté la friction et découragé les utilisateurs qui veulent juste écouter. Optionnel mais mis en avant dans l'interface. C'est le bon équilibre : ceux qui veulent progresser l'utilisent, ceux qui ne veulent pas ne sont pas bloqués.
 
-## Favoris & Listes
+**Nombre de questions.** 10 à 20 selon le livre. En dessous de 10, le quiz est trop court pour vraiment tester la compréhension. Au-dessus de 20, il devient décourageant. Cette plage couvre l'essentiel sans imposer 30 minutes de test après 60 minutes d'écoute.
 
-### 4 systèmes de favoris distincts
-
-```typescript
-// 1. Livres favoris (BookRow → long press → "Ajouter aux favoris")
-favoriteBookIds: string[]
-
-// 2. Citations favorites (CitationsScreen → ❤️)
-favoriteCitationIds: string[]  // clé "bookId::citationIndex"
-
-// 3. Applications favorites (ApplicationsSheet → ❤️)
-favoriteApplicationIds: string[]  // clé "bookId::appIndex"
-
-// 4. Reading List (BookRow → long press → "À lire plus tard")
-readingListIds: string[]  // bookmark, pas encore lu
-```
-
-### FavoritesScreen (ReadingListScreen)
-Affiche les citations et applications favorites avec navigation vers le livre source.
-
-## Journeys Thématiques
-
-### Concept
-
-Un Journey est un parcours guidé multi-livres autour d'un thème philosophique :
-
-```json
-{
-  "id": "stoiciens",
-  "title": "Les grands stoïciens",
-  "description": "De Zénon à Marc Aurèle — comprendre le stoïcisme par ses sources",
-  "steps": [
-    { "bookId": "zenon-stoicisme-fondements", "order": 1 },
-    { "bookId": "epictete-entretiens", "order": 2 },
-    { "bookId": "marc-aurele-pensees", "order": 3 }
-  ]
-}
-```
-
-### JourneyScreen
-
-```
-Journey "Les grands stoïciens"
-├── Progression : 1/3 livres complétés
-│
-├── ① Fondements du stoïcisme (Zénon)    ✅ Terminé
-├── ② Entretiens (Épictète)              🔵 En cours (67%)
-└── ③ Pensées pour moi-même (Marc Aurèle) ⬜ À démarrer
-```
-
-## Applications Pratiques
-
-### Format application.json
-
-Chaque livre sur R2 contient des applications concrètes en deux dimensions :
-
-```json
-{
-  "applications": [
-    {
-      "section": "pro",
-      "title": "La méthode socratique en réunion",
-      "content": "Au lieu d'affirmer vos idées, questionnez vos interlocuteurs...",
-      "action_immediate": "Lors de votre prochaine réunion, posez 3 questions ouvertes"
-    },
-    {
-      "section": "perso",
-      "title": "Examiner ses certitudes",
-      "content": "Identifiez une conviction forte que vous n'avez jamais questionnée...",
-      "action_immediate": "Ce soir, choisissez une croyance et cherchez 3 contre-exemples"
-    }
-  ]
-}
-```
-
-### ApplicationsSheet
-
-Bottom sheet organisé en 2 onglets (Pro / Perso). Chaque application est une card avec :
-- Titre
-- Contenu développé
-- **Action immédiate** (l'élément le plus important — quelque chose à faire aujourd'hui)
-- ❤️ Favoris
-
-Cette feature est une différenciation forte de Sapior vs Audible/Blinkist : pas seulement comprendre, mais *appliquer*.
+**Streak ou points ?** Le streak est plus lisible et plus émotionnellement chargé qu'un score de points. Perdre 50 points est abstrait. Perdre un streak de 12 est concret. Le choix du streak est délibéré.
