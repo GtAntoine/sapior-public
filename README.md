@@ -16,15 +16,15 @@
 ---
 
 <div align="center">
-  <img src="./public/images/screenshot-0.jpg" alt="Sapior - Accueil" width="33%" />
-  <img src="./public/images/screenshot-1.jpg" alt="Sapior - Player" width="33%" />
-  <img src="./public/images/screenshot-2.jpg" alt="Sapior - Quiz" width="33%" />
+  <img src="./public/images/screenshot-0.jpg" alt="Sapior - Accueil" width="30%" />
+  <img src="./public/images/screenshot-1.jpg" alt="Sapior - Player" width="30%" />
+  <img src="./public/images/screenshot-2.jpg" alt="Sapior - Quiz" width="30%" />
 </div>
 
 <div align="center">
-  <img src="./public/images/screenshot-3.jpg" alt="Sapior - Stats" width="33%" />
-  <img src="./public/images/screenshot-4.jpg" alt="Sapior - Recherche" width="33%" />
-  <img src="./public/images/screenshot-5.jpg" alt="Sapior - Philo" width="33%" />
+  <img src="./public/images/screenshot-3.jpg" alt="Sapior - Stats" width="30%" />
+  <img src="./public/images/screenshot-4.jpg" alt="Sapior - Recherche" width="30%" />
+  <img src="./public/images/screenshot-5.jpg" alt="Sapior - Philo" width="30%" />
 </div>
 
 ---
@@ -49,8 +49,10 @@ L'idée de départ : les gens achètent des livres qu'ils ne finissent pas. Le f
 - Un player audio avec contrôle de vitesse et reprise automatique à la position précédente
 - Un quiz après chaque livre pour ancrer les idées clés
 - Un mode Quiz Infini avec streak (204 questions disponibles, record personnel à 40 consécutives)
+- Des citations à partager : long press sur une citation, l'app génère une carte visuelle prête à envoyer
+- Des applications concrètes pour chaque livre, en deux volets (professionnel et personnel), avec une action à faire le jour même
 - Un parcours chronologique de la philosophie, de l'Antiquité à aujourd'hui
-- La possibilité de demander un audio manquant depuis l'appli
+- Un bouton "Demander l'audio" pour signaler un titre manquant depuis l'app
 
 ---
 
