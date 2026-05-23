@@ -5,12 +5,12 @@
 <div align="center">
 
 [![App Store](https://img.shields.io/badge/App_Store-0D96F6?style=for-the-badge&logo=app-store&logoColor=white)](https://apps.apple.com/fr/app/sapior/id6761835272)
-[![iOS](https://img.shields.io/badge/iOS-000000?style=for-the-badge&logo=ios&logoColor=white)](https://apps.apple.com/fr/app/sapior/id6761835272)
+[![Google Play](https://img.shields.io/badge/Google_Play-414141?style=for-the-badge&logo=google-play&logoColor=white)](https://play.google.com/store/apps/details?id=fr.goethals.sapior)
 [![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactnative.dev/)
 [![Expo](https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white)](https://expo.dev/)
 [![Cloudflare](https://img.shields.io/badge/Cloudflare_R2-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://cloudflare.com/)
 
-**[📱 Télécharger sur l'App Store](https://apps.apple.com/fr/app/sapior/id6761835272) · [🌐 Site Web](https://goethals.fr/sapior/)**
+**[📱 App Store](https://apps.apple.com/fr/app/sapior/id6761835272) · [🤖 Google Play](https://play.google.com/store/apps/details?id=fr.goethals.sapior) · [🌐 Site Web](https://goethals.fr/sapior/)**
 
 </div>
 
@@ -394,6 +394,7 @@ useAudio.ts
 | **Orientation** | Portrait uniquement |
 | **Interface** | Dark mode forcé |
 | **Audio background** | Activé |
+| **Publication** | App Store (iOS) + Google Play (Android) |
 | **Catalogue** | 30+ oeuvres, 32 catégories |
 
 ---
